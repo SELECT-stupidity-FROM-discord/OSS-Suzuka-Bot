@@ -36,8 +36,9 @@ def executor() -> Callable[[Callable[..., Any]], Any]:
         return inner
     return outer
 
+
 @executor()
-def create_trash_meme(  
+def create_trash_meme(
     member_avatar: BytesIO,
     author_avatar: BytesIO
 ) -> File:
@@ -48,7 +49,8 @@ def create_trash_meme(
     avatar_two = member_avatar
 
     avatar_one_image = Image.open(avatar_one).resize((180, 180))
-    avatar_two_image = Image.open(avatar_two).resize((180, 180)).rotate(5, expand=True)
+    avatar_two_image = Image.open(avatar_two).resize(
+        (180, 180)).rotate(5, expand=True)
 
     background.paste(avatar_one_image, (100, 190))
     background.paste(avatar_two_image, (372, 77))
@@ -58,6 +60,32 @@ def create_trash_meme(
     background.save(buffer, format='PNG')
     buffer.seek(0)
     file = File(buffer, filename='Trash.png')
-    
+
     return file
 
+async def find_anime_source(session, source_image: str):
+    base = "https://api.trace.moe/search?anilistInfo&url={}"
+    async with session.get(base.format(source_image)) as resp:
+        data = await resp.json()
+    return data
+
+
+# async def return_anime_banner(session: ClientSession, query: str) -> str:
+#     query = '''
+#         query ($search: String) { # Define which variables will be used in the query (id)
+#             Media (search: $search, type: ANIME) { # Insert our variables into the query arguments (id) (type: ANIME is hard-coded in the query)
+#                 id
+#                 title {
+#                     romaji
+#                 }
+#             }
+#         }
+#     '''
+#     variables = {
+#         'search': query,
+#     }
+#     url = 'https://graphql.anilist.co/'
+#     response = await session.post(url, data={'query': query, 'variables': variables})
+#     raw = await response.json()
+#     ani_id = raw['data']['Media']['id']
+#     return "https://img.anili.st/media/{}".format(ani_id)

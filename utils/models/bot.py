@@ -24,6 +24,7 @@ class SuzukaBot(commands.Bot):
         self.session: aiohttp.ClientSession = None
         self.cache: MainCache = None
         self.database: Database = None
+        self.theme = 0xE9C1FA
 
     async def on_ready(self):
         print(f'Logged in as {self.user.name}')
