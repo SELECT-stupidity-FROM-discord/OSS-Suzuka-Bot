@@ -6,6 +6,7 @@ __pycache__
 # personal
 venv/
 *.env
+databases/
 
 
 
