@@ -24,7 +24,6 @@ class Tasks(Cog, command_attrs={'hidden': True}): # type: ignore
         text = await response.text()
         root = ET.fromstring(text)
         representer = await AnimeNewsRepresenter.construct(root, self.bot.session)
-        print(representer)
         for guild_id, channel_id in self.bot.cache.subscription.cache.items():
             guild = self.bot.get_guild(guild_id)
             channel = guild.get_channel(channel_id)

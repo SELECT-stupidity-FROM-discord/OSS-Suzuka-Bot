@@ -11,7 +11,7 @@ class HelpCommand(commands.HelpCommand):
             command_attrs={
                 'help': 'Shows this message.',
                 'name': 'cmd',
-                'aliases': ['cmds'],
+                'aliases': ['cmds', 'commands'],
             }
         )
 

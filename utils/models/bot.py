@@ -2,6 +2,7 @@ import os
 import aiohttp
 from discord.ext import commands
 from utils.helpers import INTENTS
+from utils.helpers.consts import VERSION
 from utils.helpers.functions import get_prefix
 from utils.models.database import Database
 
@@ -27,7 +28,7 @@ class SuzukaBot(commands.Bot):
         self.theme = 0xE9C1FA
 
     async def on_ready(self):
-        print(f'Logged in as {self.user.name}')
+        print(f'Logged in as {self.user.name}\nCurrent version: {VERSION}')
 
     async def start(self, token: str, *, reconnect: bool = True):
         

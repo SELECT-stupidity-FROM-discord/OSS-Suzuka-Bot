@@ -1,14 +1,16 @@
 import os
+from typing import Any, Literal
 
 from discord import Intents
 from discord.ext import commands
 from dotenv import load_dotenv
 
+from .helper import _MissingSentinel
+from .version import Version
+
 load_dotenv('.env', verbose=True)
 
-class MISSING(object):
-    pass
-
+MISSING: Any = _MissingSentinel
 
 INTENTS = Intents(
     messages=True,
@@ -40,3 +42,14 @@ CREATE TABLE IF NOT EXISTS prefixes (
 )
 """
 
+VERSION = Version(
+    major=0,
+    sub_major=1,
+    minor=0,
+    patch='alpha'
+)
+
+PRIVACY_POLICY_LINK = "https://example.com"
+PATREON_LINK = "https://example.com"
+INVITE_LINK = "https://example.com"
+STATUS_PAGE_LINK = "https://example.com"
