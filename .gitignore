@@ -1,0 +1,11 @@
+# cache
+.mypy_cache
+.vscode
+__pycache__
+
+# personal
+venv/
+*.env
+
+
+
