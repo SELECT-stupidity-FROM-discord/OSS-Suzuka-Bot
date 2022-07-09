@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import asyncio
+import logging
 import xml.etree.ElementTree as ET
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 import discord
-from discord.ext import tasks # type: ignore
+from discord.ext import tasks  # type: ignore
 from utils.helpers import Cog
 from utils.models.representer import AnimeNewsRepresenter
 
@@ -20,11 +22,27 @@ class Tasks(Cog, command_attrs={'hidden': True}): # type: ignore
 
     @tasks.loop(seconds=10)
     async def loop_task(self):
-        response = await self.bot.session.get('https://www.animenewsnetwork.com/all/rss.xml?ann-edition=en')
+        response = await self.bot.session.get('https://www.animenewsnetwork.com/all/rss.xml?ann-edition=us')
         text = await response.text()
         root = ET.fromstring(text)
         representer = await AnimeNewsRepresenter.construct(root, self.bot.session)
-        for guild_id, channel_id in self.bot.cache.subscription.cache.items():
+        if self.bot.cache.anime_news:
+            if self.bot.cache.anime_news.to_json() != representer.to_json():
+                self.bot.cache.cache['anime_news'] = representer
+            else:
+                return
+        else:
+            self.bot.cache.cache['anime_news'] = representer
+        await self.bot.database.insert_record(
+            'config',
+            table='anime_news',
+            columns=('title', 'description', 'image', 'url'),
+            values=(representer.title, representer.description, representer.image, representer.url)
+        )
+        print(self.bot.cache.anime_news.to_json())
+        for i, (guild_id, channel_id) in enumerate(self.bot.cache.subscription.cache.items(), 1):
+            if i % 5 == 0:
+                await asyncio.sleep(1)
             guild = self.bot.get_guild(guild_id)
             channel = guild.get_channel(channel_id)
             if channel is not None:
@@ -43,8 +61,8 @@ class Tasks(Cog, command_attrs={'hidden': True}): # type: ignore
     
     @loop_task.before_loop
     async def before_loop_task(self):
-        print('Starting loop_task...')
         await self.bot.wait_until_ready()
+        self.bot.logger.info('Started task loop for Anime News')
 
 async def setup(bot: SuzukaBot):
     await bot.add_cog(Tasks(bot))

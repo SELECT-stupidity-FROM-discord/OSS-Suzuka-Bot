@@ -5,7 +5,6 @@ import functools
 from io import BytesIO
 from typing import TYPE_CHECKING, Any, Callable, List
 
-from aiohttp import ClientSession
 from discord import File, Message
 from discord.ext import commands
 from PIL import Image
@@ -23,7 +22,7 @@ def get_prefix(bot: SuzukaBot, message: Message) -> List[str]:
             prefix = DEFAULT_PREFIX
     else:
         prefix = DEFAULT_PREFIX
-    return commands.when_mentioned_or(*prefix)(bot, message)
+    return commands.when_mentioned_or("Suzuka ", *prefix)(bot, message)
 
 
 def executor() -> Callable[[Callable[..., Any]], Any]:

@@ -3,7 +3,7 @@ from __future__ import annotations
 import string
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
-from utils.helpers import PREFIX_CONFIG_SCHEMA
+from utils.helpers import PREFIX_CONFIG_SCHEMA, ANIME_NEWS_CONFIG_SCHEMA
 
 import aiosqlite
 
@@ -64,14 +64,18 @@ class Database:
             return self.conn[__name]
         return super().__getattribute__(__name)
 
-    async def __aenter__(self) -> "Database":
+    async def add_connections(self):
         self.conn["config"] = await aiosqlite.connect("./databases/config.db")
+
+    async def __aenter__(self) -> "Database":
+        await self.add_connections()
         await self.init_dbs()
         return self
 
     async def init_dbs(self):
         async with self.cursor("config") as cursor:
             await cursor.execute(PREFIX_CONFIG_SCHEMA)
+            await cursor.execute(ANIME_NEWS_CONFIG_SCHEMA)
 
         await self.commit()
 

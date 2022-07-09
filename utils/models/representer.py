@@ -26,6 +26,10 @@ class AnimeNewsRepresenter:
         return image
 
     @classmethod
+    def from_information(cls, title: str, image: str, description: str, url: str) -> 'AnimeNewsRepresenter':
+        return cls(title, description, image, url)
+
+    @classmethod
     async def construct(cls, root: ElementTree, session: aiohttp.ClientSession) -> 'AnimeNewsRepresenter':
         item = root.find('channel/item')
         title = item.find('title').text # type: ignore
@@ -39,6 +43,14 @@ class AnimeNewsRepresenter:
             image = "https://i.imgur.com/rKCYWIp.png"
         return cls(title, description, image, url) # type: ignore
 
+    def to_json(self) -> dict:
+        return {
+            'title': self.title,
+            'description': self.description,
+            'image': self.image,
+            'url': self.url
+        }
+
     def __repr__(self) -> str:
-        return f'<AnimeNewsRepresenter title<{self.title}> description<{self.description}> image<{self.image}> url<{self.url}>>'
+        return f'<AnimeNewsRepresenter title={self.title} description={self.description} image={self.image} url={self.url}>'
     

@@ -36,11 +36,18 @@ DEFAULT_PREFIX = [')', '(']
 
 PREFIX_CONFIG_SCHEMA = """
 CREATE TABLE IF NOT EXISTS prefixes (
-    guild_id BIGINT,
+    guild_id BIGINT UNIQUE,
     prefix TEXT,
     UNIQUE(guild_id, prefix)
 )
 """
+
+ANIME_NEWS_CONFIG_SCHEMA = """
+CREATE TABLE IF NOT EXISTS anime_news (
+    title TEXT,
+    description TEXT,
+    url TEXT,
+    image TEXT);"""
 
 VERSION = Version(
     major=0,

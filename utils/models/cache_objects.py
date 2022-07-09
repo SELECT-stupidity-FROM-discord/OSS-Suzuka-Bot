@@ -20,11 +20,14 @@ class MainCache:
         return getattr(self.cache, key)
 
     def __getattribute__(self, __name: str) -> Any:
-        return object.__getattribute__(self, 'cache')[__name]
+        try:
+            return object.__getattribute__(self, 'cache')[__name]
+        except KeyError:
+            return super().__getattribute__(__name)
 
 
 class PrefixCache:
-    def __init__(self, cache: P) -> None:
+    def __init__(self, cache: P = {}) -> None: # type: ignore
         self.cache = cache
 
     def get(self, key: int) -> Union[List[str], MISSING]:
@@ -34,13 +37,18 @@ class PrefixCache:
             self.cache[key] = to_return
         return to_return
 
+    def set(self, key: int, value: Optional[str]) -> None:
+        if value is None:
+            self.cache[key] = MISSING
+        self.cache[key] = [value]
+
     def __in__(self, key: str) -> bool:
         return key in self.cache
 
 
 
 class HaremCache:
-    def __init__(self, cache: Dict[str, Any]):
+    def __init__(self, cache: Dict[str, Any] = {}):
         self.cache = cache
 
     def get(self, key) -> Optional[Dict[str, Any]]:
@@ -56,7 +64,7 @@ class HaremCache:
 class CooldownCache:
     def __init__(
         self, 
-        cache: Dict[int, D]
+        cache: Dict[int, D] = {}
         ):
         self.cache = cache
 
@@ -70,7 +78,7 @@ class CooldownCache:
         return key in self.cache
 
 class PPCache:
-    def __init__(self, cache: Dict[int, int]):
+    def __init__(self, cache: Dict[int, int] = {}):
         self.cache = cache
 
     def get(self, key) -> Optional[int]:
@@ -83,7 +91,7 @@ class PPCache:
         return key in self.cache
 
 class SubscriptionCache:
-    def __init__(self, cache: Dict[int, int]):
+    def __init__(self, cache: Dict[int, int] = {}):
         self.cache = cache
 
     def get(self, key) -> Optional[int]:
